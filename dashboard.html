@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard - StudyHub</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>StudyHub</h1>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" id="logoutBtn">Logout</a>
+    </nav>
+
+</header>
+
+
+<main class="dashboard">
+
+    <section class="welcome">
+
+        <h2>Student Dashboard 👋</h2>
+
+        <p>
+            Create study groups, join groups and learn together.
+        </p>
+
+    </section>
+
+
+    <section class="dashboard-card">
+
+        <h2>➕ Create Study Group</h2>
+
+        <p>
+            Create a new group for your subject.
+        </p>
+
+        <form id="groupForm">
+
+            <label>Group Name</label>
+
+            <input
+                type="text"
+                id="groupName"
+                placeholder="Example: Java Study Group"
+                required
+            >
+
+            <label>Subject</label>
+
+            <input
+                type="text"
+                id="subject"
+                placeholder="Example: Java Programming"
+                required
+            >
+
+            <button type="submit" class="btn">
+                Create Group
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <section class="dashboard-card">
+
+        <h2>📚 Available Study Groups</h2>
+
+        <p>
+            Join an existing group or open your group.
+        </p>
+
+        <div id="groupList"></div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 StudyHub | Group Study Management System
+    </p>
+
+</footer>
+
+
+<script>
+
+// Check login
+const currentUser =
+    JSON.parse(localStorage.getItem("currentUser"));
+
+if (!currentUser) {
+
+    alert("Please login first!");
+
+    window.location.href = "login.html";
+}
+
+
+// Logout
+document
+    .getElementById("logoutBtn")
+    .addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        localStorage.removeItem("currentUser");
+
+        window.location.href = "login.html";
+
+    });
+
+
+// Create Study Group
+document
+    .getElementById("groupForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const groupName =
+            document.getElementById("groupName").value.trim();
+
+        const subject =
+            document.getElementById("subject").value.trim();
+
+
+        if (!groupName || !subject) {
+
+            alert("Please enter Group Name and Subject.");
+
+            return;
+        }
+
+
+        let groups =
+            JSON.parse(localStorage.getItem("groups")) || [];
+
+
+        const newGroup = {
+
+            id: Date.now(),
+
+            name: groupName,
+
+            subject: subject,
+
+            creator: currentUser.name,
+
+            members: [currentUser.email],
+
+            messages: []
+
+        };
+
+
+        groups.push(newGroup);
+
+
+        localStorage.setItem(
+            "groups",
+            JSON.stringify(groups)
+        );
+
+
+        alert("Study group created successfully!");
+
+
+        document.getElementById("groupName").value = "";
+
+        document.getElementById("subject").value = "";
+
+
+        displayGroups();
+
+    });
+
+
+// Display Study Groups
+function displayGroups() {
+
+    const groupList =
+        document.getElementById("groupList");
+
+
+    const groups =
+        JSON.parse(localStorage.getItem("groups")) || [];
+
+
+    groupList.innerHTML = "";
+
+
+    if (groups.length === 0) {
+
+        groupList.innerHTML =
+            "<p>No study groups available yet.</p>";
+
+        return;
+    }
+
+
+    groups.forEach(function(group) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className = "card";
+
+
+        const isMember =
+            group.members.includes(currentUser.email);
+
+
+        card.innerHTML = `
+
+            <h3>${group.name}</h3>
+
+            <p>
+                <strong>Subject:</strong>
+                ${group.subject}
+            </p>
+
+            <p>
+                <strong>Created By:</strong>
+                ${group.creator}
+            </p>
+
+            <p>
+                <strong>Members:</strong>
+                ${group.members.length}
+            </p>
+
+            ${
+                isMember
+
+                ?
+
+                `<button onclick="openGroup(${group.id})">
+                    Open Group
+                </button>`
+
+                :
+
+                `<button onclick="joinGroup(${group.id})">
+                    Join Group
+                </button>`
+            }
+
+        `;
+
+
+        groupList.appendChild(card);
+
+    });
+
+}
+
+
+// Join Study Group
+function joinGroup(groupId) {
+
+    let groups =
+        JSON.parse(localStorage.getItem("groups")) || [];
+
+
+    const group =
+        groups.find(function(g) {
+
+            return g.id === groupId;
+
+        });
+
+
+    if (!group) {
+
+        alert("Group not found!");
+
+        return;
+    }
+
+
+    // Prevent duplicate joining
+    if (group.members.includes(currentUser.email)) {
+
+        alert("You are already a member of this group!");
+
+        return;
+    }
+
+
+    group.members.push(currentUser.email);
+
+
+    localStorage.setItem(
+        "groups",
+        JSON.stringify(groups)
+    );
+
+
+    alert("You joined the group successfully!");
+
+
+    displayGroups();
+
+}
+
+
+// Open Group
+function openGroup(groupId) {
+
+    localStorage.setItem(
+        "selectedGroup",
+        groupId
+    );
+
+
+    window.location.href = "group.html";
+
+}
+
+
+// Load groups when page opens
+displayGroups();
+
+</script>
+
+</body>
+
+</html>

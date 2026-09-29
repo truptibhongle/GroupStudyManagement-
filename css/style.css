@@ -1,0 +1,600 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f6f8ff;
+    color: #172033;
+    line-height: 1.6;
+}
+
+/* ================= HEADER ================= */
+
+header {
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    color: white;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 5px 25px rgba(37, 99, 235, 0.25);
+}
+
+header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 9px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-2px);
+}
+
+
+/* ================= HERO ================= */
+
+.hero {
+    min-height: 520px;
+    padding: 90px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        radial-gradient(circle at 10% 20%, #dbeafe 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, #ede9fe 0%, transparent 30%),
+        #ffffff;
+}
+
+.hero h2 {
+    max-width: 850px;
+    font-size: 58px;
+    line-height: 1.1;
+    color: #172554;
+    margin-bottom: 22px;
+    font-weight: 800;
+}
+
+.hero p {
+    max-width: 680px;
+    font-size: 18px;
+    color: #64748b;
+    margin-bottom: 35px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+
+/* ================= BUTTONS ================= */
+
+.btn,
+button {
+    display: inline-block;
+
+    border: none;
+
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+
+    color: white;
+
+    padding: 13px 25px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    box-shadow: 0 7px 18px rgba(37, 99, 235, 0.20);
+}
+
+.btn:hover,
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.30);
+}
+
+.secondary-btn {
+    background: white;
+    color: #4f46e5;
+    border: 2px solid #4f46e5;
+}
+
+
+/* ================= FEATURE CARDS ================= */
+
+.features {
+    max-width: 1150px;
+    margin: 70px auto;
+    padding: 0 25px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.card {
+    background: white;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e4e8f2;
+
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-7px);
+
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
+
+    border-color: #c7d2fe;
+}
+
+.card h3 {
+    color: #4338ca;
+    margin-bottom: 10px;
+    font-size: 19px;
+}
+
+.card p {
+    color: #64748b;
+}
+
+
+/* ================= FORMS ================= */
+
+.form-container {
+    width: 90%;
+    max-width: 480px;
+
+    margin: 60px auto;
+
+    padding: 38px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.09);
+}
+
+.form-container h2 {
+    text-align: center;
+
+    color: #172554;
+
+    font-size: 30px;
+
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+
+    margin-top: 16px;
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+
+    padding: 13px 15px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    color: #172033;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.25s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    background: white;
+
+    border-color: #4f46e5;
+
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.10);
+}
+
+textarea {
+    min-height: 130px;
+
+    resize: vertical;
+}
+
+.form-container button {
+    width: 100%;
+
+    margin-top: 25px;
+}
+
+
+/* ================= DASHBOARD ================= */
+
+.dashboard {
+    max-width: 1150px;
+
+    margin: 45px auto;
+
+    padding: 0 25px;
+}
+
+.welcome {
+    background:
+        radial-gradient(circle at 90% 10%, rgba(255,255,255,0.20), transparent 25%),
+        linear-gradient(135deg, #4f46e5, #2563eb);
+
+    color: white;
+
+    padding: 40px;
+
+    border-radius: 22px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.20);
+}
+
+.welcome h2 {
+    font-size: 34px;
+
+    margin-bottom: 8px;
+}
+
+.welcome p {
+    color: #e0e7ff;
+
+    font-size: 16px;
+}
+
+.dashboard-card {
+    background: white;
+
+    padding: 32px;
+
+    margin-bottom: 25px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-card h2 {
+    color: #172554;
+
+    margin-bottom: 8px;
+}
+
+.dashboard-card > p {
+    color: #64748b;
+
+    margin-bottom: 20px;
+}
+
+
+/* ================= GROUP LIST ================= */
+
+#groupList {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+#groupList .card {
+    border-left: 5px solid #4f46e5;
+}
+
+#groupList .card button {
+    margin-top: 15px;
+}
+
+
+/* ================= MEMBERS ================= */
+
+#memberList {
+    list-style: none;
+
+    padding: 0;
+
+    margin-top: 15px;
+}
+
+#memberList li {
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    padding: 13px 16px;
+
+    margin-bottom: 9px;
+
+    border-radius: 10px;
+
+    color: #475569;
+
+    transition: 0.2s;
+}
+
+#memberList li:hover {
+    background: #eef2ff;
+
+    border-color: #c7d2fe;
+}
+
+
+/* ================= MESSAGES ================= */
+
+#messageList {
+    margin-top: 20px;
+}
+
+#messageList .card {
+    margin-bottom: 14px;
+
+    border-left: 5px solid #7c3aed;
+}
+
+#messageList .card strong {
+    color: #4338ca;
+
+    font-size: 15px;
+}
+
+#messageList .card p {
+    margin-top: 6px;
+}
+
+
+/* ================= ADMIN STATISTICS ================= */
+
+#statistics {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-top: 20px;
+}
+
+#statistics .card {
+    text-align: center;
+
+    border-top: 5px solid #4f46e5;
+}
+
+#statistics .card h3 {
+    font-size: 15px;
+
+    color: #64748b;
+}
+
+#statistics .card p {
+    color: #172554;
+
+    font-size: 32px;
+
+    font-weight: 800;
+
+    margin-top: 8px;
+}
+
+
+/* ================= USER LIST ================= */
+
+#userList {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 18px;
+
+    margin-top: 20px;
+}
+
+#userList .card {
+    border-left: 5px solid #10b981;
+}
+
+
+/* ================= FOOTER ================= */
+
+footer {
+    background: #0f172a;
+
+    color: #cbd5e1;
+
+    text-align: center;
+
+    padding: 30px;
+
+    margin-top: 70px;
+}
+
+
+/* ================= ANIMATIONS ================= */
+
+.hero h2 {
+    animation: fadeDown 0.7s ease;
+}
+
+.hero p {
+    animation: fadeUp 0.8s ease;
+}
+
+.card,
+.dashboard-card,
+.form-container {
+    animation: fadeUp 0.5s ease;
+}
+
+@keyframes fadeDown {
+
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+@keyframes fadeUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 900px) {
+
+    .hero h2 {
+        font-size: 45px;
+    }
+
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #groupList {
+        grid-template-columns: 1fr;
+    }
+
+    #statistics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    header {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 70px 20px;
+    }
+
+    .hero h2 {
+        font-size: 36px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+
+        width: 220px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard {
+        padding: 0 15px;
+    }
+
+    .dashboard-card {
+        padding: 22px;
+    }
+
+    #statistics {
+        grid-template-columns: 1fr;
+    }
+
+    #userList {
+        grid-template-columns: 1fr;
+    }
+
+}
+

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study Group - StudyHub</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>StudyHub</h1>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+
+</header>
+
+
+<main class="dashboard">
+
+    <!-- Group Information -->
+    <section class="welcome">
+
+        <h2 id="groupTitle">Study Group</h2>
+
+        <p>
+            Subject:
+            <strong id="groupSubject"></strong>
+        </p>
+
+    </section>
+
+
+    <!-- Members -->
+    <section class="dashboard-card">
+
+        <h2>👥 Group Members</h2>
+
+        <ul id="memberList"></ul>
+
+    </section>
+
+
+    <!-- Message Board -->
+    <section class="dashboard-card">
+
+        <h2>💬 Group Message Board</h2>
+
+        <p>
+            Share questions, ideas and study information
+            with your group members.
+        </p>
+
+
+        <form id="messageForm">
+
+            <label>Your Message</label>
+
+            <textarea
+                id="message"
+                placeholder="Write your message..."
+                required
+            ></textarea>
+
+
+            <button type="submit" class="btn">
+                Post Message
+            </button>
+
+        </form>
+
+
+        <h3 style="margin-top:30px;">
+            Messages
+        </h3>
+
+        <div id="messageList"></div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 StudyHub | Group Study Management System
+    </p>
+
+</footer>
+
+
+<script>
+
+// Check logged-in user
+const currentUser =
+    JSON.parse(localStorage.getItem("currentUser"));
+
+
+if (!currentUser) {
+
+    alert("Please login first!");
+
+    window.location.href = "login.html";
+
+}
+
+
+// Get selected group
+const groupId =
+    Number(localStorage.getItem("selectedGroup"));
+
+
+let groups =
+    JSON.parse(localStorage.getItem("groups")) || [];
+
+
+const group =
+    groups.find(function(g) {
+
+        return g.id === groupId;
+
+    });
+
+
+// Check group
+if (!group) {
+
+    alert("Group not found!");
+
+    window.location.href = "dashboard.html";
+
+}
+
+
+// IMPORTANT:
+// Only group members can access
+if (
+    group &&
+    !group.members.includes(currentUser.email)
+) {
+
+    alert("Only group members can access this group!");
+
+    window.location.href = "dashboard.html";
+
+}
+
+
+// Display group information
+if (group) {
+
+    document.getElementById("groupTitle").innerText =
+        group.name;
+
+    document.getElementById("groupSubject").innerText =
+        group.subject;
+
+}
+
+
+// Display members
+function displayMembers() {
+
+    const memberList =
+        document.getElementById("memberList");
+
+
+    memberList.innerHTML = "";
+
+
+    group.members.forEach(function(email) {
+
+        const li =
+            document.createElement("li");
+
+
+        li.innerText = email;
+
+
+        memberList.appendChild(li);
+
+    });
+
+}
+
+
+// Display messages
+function displayMessages() {
+
+    const messageList =
+        document.getElementById("messageList");
+
+
+    messageList.innerHTML = "";
+
+
+    if (group.messages.length === 0) {
+
+        messageList.innerHTML =
+            "<p>No messages yet. Be the first to post!</p>";
+
+        return;
+
+    }
+
+
+    group.messages.forEach(function(msg) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className = "card";
+
+
+        card.innerHTML = `
+
+            <strong>${msg.user}</strong>
+
+            <p>${msg.message}</p>
+
+        `;
+
+
+        messageList.appendChild(card);
+
+    });
+
+}
+
+
+// Post message
+document
+    .getElementById("messageForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+
+        const message =
+            document.getElementById("message")
+            .value
+            .trim();
+
+
+        if (!message) {
+
+            alert("Please enter a message!");
+
+            return;
+
+        }
+
+
+        group.messages.push({
+
+            user: currentUser.name,
+
+            message: message
+
+        });
+
+
+        localStorage.setItem(
+            "groups",
+            JSON.stringify(groups)
+        );
+
+
+        document.getElementById("message").value = "";
+
+
+        alert("Message posted successfully!");
+
+
+        displayMessages();
+
+    });
+
+
+// Logout
+function logout() {
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "login.html";
+
+}
+
+
+// Load data
+displayMembers();
+
+displayMessages();
+
+</script>
+
+</body>
+
+</html>
+

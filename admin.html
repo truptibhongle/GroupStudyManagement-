@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - StudyHub</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>StudyHub</h1>
+
+    <nav>
+        <a href="admin.html">Admin Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+
+</header>
+
+
+<main class="dashboard">
+
+    <!-- Welcome -->
+    <section class="welcome">
+
+        <h2>Admin Dashboard 🛠️</h2>
+
+        <p>
+            Manage users and monitor StudyHub platform activity.
+        </p>
+
+    </section>
+
+
+    <!-- Statistics -->
+    <section class="dashboard-card">
+
+        <h2>📊 Platform Activity</h2>
+
+        <div id="statistics"></div>
+
+    </section>
+
+
+    <!-- Users -->
+    <section class="dashboard-card">
+
+        <h2>👥 Registered Users</h2>
+
+        <div id="userList"></div>
+
+    </section>
+
+
+    <!-- Groups -->
+    <section class="dashboard-card">
+
+        <h2>📚 Study Groups</h2>
+
+        <div id="groupList"></div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 StudyHub | Group Study Management System
+    </p>
+
+</footer>
+
+
+<script>
+
+// Check login
+const currentUser =
+    JSON.parse(localStorage.getItem("currentUser"));
+
+
+if (!currentUser) {
+
+    alert("Please login first!");
+
+    window.location.href = "login.html";
+
+}
+
+
+// Admin-only access
+if (
+    currentUser &&
+    currentUser.role !== "Admin"
+) {
+
+    alert("Access denied! Admin only.");
+
+    window.location.href = "dashboard.html";
+
+}
+
+
+// Get data
+const users =
+    JSON.parse(localStorage.getItem("users")) || [];
+
+
+const groups =
+    JSON.parse(localStorage.getItem("groups")) || [];
+
+
+// Count users
+const studentCount =
+    users.filter(function(user) {
+
+        return user.role === "Student";
+
+    }).length;
+
+
+const adminCount =
+    users.filter(function(user) {
+
+        return user.role === "Admin";
+
+    }).length;
+
+
+// Platform statistics
+document.getElementById("statistics").innerHTML = `
+
+    <div class="card">
+
+        <h3>Total Users</h3>
+
+        <p>${users.length}</p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Students</h3>
+
+        <p>${studentCount}</p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Admins</h3>
+
+        <p>${adminCount}</p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Study Groups</h3>
+
+        <p>${groups.length}</p>
+
+    </div>
+
+`;
+
+
+// Display users
+const userList =
+    document.getElementById("userList");
+
+
+if (users.length === 0) {
+
+    userList.innerHTML =
+        "<p>No registered users.</p>";
+
+} else {
+
+    users.forEach(function(user) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className = "card";
+
+
+        card.innerHTML = `
+
+            <h3>${user.name}</h3>
+
+            <p>
+                <strong>Email:</strong>
+                ${user.email}
+            </p>
+
+            <p>
+                <strong>Role:</strong>
+                ${user.role}
+            </p>
+
+        `;
+
+
+        userList.appendChild(card);
+
+    });
+
+}
+
+
+// Display groups
+const groupList =
+    document.getElementById("groupList");
+
+
+if (groups.length === 0) {
+
+    groupList.innerHTML =
+        "<p>No study groups created yet.</p>";
+
+} else {
+
+    groups.forEach(function(group) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className = "card";
+
+
+        card.innerHTML = `
+
+            <h3>${group.name}</h3>
+
+            <p>
+                <strong>Subject:</strong>
+                ${group.subject}
+            </p>
+
+            <p>
+                <strong>Created By:</strong>
+                ${group.creator}
+            </p>
+
+            <p>
+                <strong>Members:</strong>
+                ${group.members.length}
+            </p>
+
+        `;
+
+
+        groupList.appendChild(card);
+
+    });
+
+}
+
+
+// Logout
+function logout() {
+
+    localStorage.removeItem("currentUser");
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>
