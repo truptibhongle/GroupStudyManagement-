@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Student Dashboard - StudyHub</title>
-
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <header>
-
     <h1>StudyHub</h1>
 
     <nav>
@@ -21,30 +17,21 @@
         <a href="index.html">Home</a>
         <a href="#" id="logoutBtn">Logout</a>
     </nav>
-
 </header>
-
 
 <main class="dashboard">
 
     <section class="welcome">
-
         <h2>Student Dashboard 👋</h2>
-
-        <p>
-            Create study groups, join groups and learn together.
-        </p>
-
+        <p>Create study groups, join groups and learn together.</p>
     </section>
 
-
+    <!-- CREATE GROUP -->
     <section class="dashboard-card">
 
         <h2>➕ Create Study Group</h2>
 
-        <p>
-            Create a new group for your subject.
-        </p>
+        <p>Create a new group and set the maximum number of members.</p>
 
         <form id="groupForm">
 
@@ -66,6 +53,17 @@
                 required
             >
 
+            <label>Maximum Members</label>
+
+            <input
+                type="number"
+                id="maxMembers"
+                min="2"
+                max="100"
+                placeholder="Example: 5"
+                required
+            >
+
             <button type="submit" class="btn">
                 Create Group
             </button>
@@ -75,12 +73,13 @@
     </section>
 
 
+    <!-- GROUP DIRECTORY -->
     <section class="dashboard-card">
 
-        <h2>📚 Available Study Groups</h2>
+        <h2>📚 Study Group Directory</h2>
 
         <p>
-            Join an existing group or open your group.
+            Browse study groups and join if seats are available.
         </p>
 
         <div id="groupList"></div>
@@ -91,20 +90,17 @@
 
 
 <footer>
-
-    <p>
-        © 2026 StudyHub | Group Study Management System
-    </p>
-
+    <p>© 2026 StudyHub | Group Study Management System</p>
 </footer>
 
 
 <script>
 
-// Check login
 const currentUser =
     JSON.parse(localStorage.getItem("currentUser"));
 
+
+// LOGIN CHECK
 if (!currentUser) {
 
     alert("Please login first!");
@@ -113,7 +109,7 @@ if (!currentUser) {
 }
 
 
-// Logout
+// LOGOUT
 document
     .getElementById("logoutBtn")
     .addEventListener("click", function(event) {
@@ -127,7 +123,7 @@ document
     });
 
 
-// Create Study Group
+// CREATE GROUP
 document
     .getElementById("groupForm")
     .addEventListener("submit", function(event) {
@@ -135,23 +131,56 @@ document
         event.preventDefault();
 
         const groupName =
-            document.getElementById("groupName").value.trim();
+            document.getElementById("groupName")
+            .value
+            .trim();
 
         const subject =
-            document.getElementById("subject").value.trim();
+            document.getElementById("subject")
+            .value
+            .trim();
+
+        const maxMembers =
+            Number(
+                document.getElementById("maxMembers").value
+            );
 
 
-        if (!groupName || !subject) {
+        // VALIDATION
 
-            alert("Please enter Group Name and Subject.");
+        if (!groupName || !subject || !maxMembers) {
+
+            alert("Please enter all group details.");
 
             return;
         }
 
 
-        let groups =
-            JSON.parse(localStorage.getItem("groups")) || [];
+        if (maxMembers < 2) {
 
+            alert("Maximum members must be at least 2.");
+
+            return;
+        }
+
+
+        if (maxMembers > 100) {
+
+            alert("Maximum members cannot exceed 100.");
+
+            return;
+        }
+
+
+        // GET EXISTING GROUPS
+
+        let groups =
+            JSON.parse(
+                localStorage.getItem("groups")
+            ) || [];
+
+
+        // CREATE NEW GROUP
 
         const newGroup = {
 
@@ -163,9 +192,17 @@ document
 
             creator: currentUser.name,
 
-            members: [currentUser.email],
+            creatorEmail: currentUser.email,
 
-            messages: []
+            maxMembers: maxMembers,
+
+            members: [
+                currentUser.email
+            ],
+
+            messages: [],
+
+            sessions: []
 
         };
 
@@ -179,12 +216,18 @@ document
         );
 
 
-        alert("Study group created successfully!");
+        alert(
+            "Study group created successfully!"
+        );
 
+
+        // CLEAR FORM
 
         document.getElementById("groupName").value = "";
 
         document.getElementById("subject").value = "";
+
+        document.getElementById("maxMembers").value = "";
 
 
         displayGroups();
@@ -192,15 +235,17 @@ document
     });
 
 
-// Display Study Groups
+// DISPLAY GROUPS
+
 function displayGroups() {
 
     const groupList =
         document.getElementById("groupList");
 
-
-    const groups =
-        JSON.parse(localStorage.getItem("groups")) || [];
+    let groups =
+        JSON.parse(
+            localStorage.getItem("groups")
+        ) || [];
 
 
     groupList.innerHTML = "";
@@ -217,15 +262,78 @@ function displayGroups() {
 
     groups.forEach(function(group) {
 
+
+        // SUPPORT OLD GROUP DATA
+
+        if (!group.maxMembers) {
+
+            group.maxMembers = 10;
+
+        }
+
+        if (!group.sessions) {
+
+            group.sessions = [];
+
+        }
+
+
         const card =
             document.createElement("div");
-
 
         card.className = "card";
 
 
         const isMember =
-            group.members.includes(currentUser.email);
+            group.members.includes(
+                currentUser.email
+            );
+
+
+        const isFull =
+            group.members.length >=
+            group.maxMembers;
+
+
+        let actionButton = "";
+
+
+        if (isMember) {
+
+            actionButton = `
+                <button
+                    onclick="openGroup(${group.id})">
+                    Open Group
+                </button>
+            `;
+
+        }
+
+        else if (isFull) {
+
+            actionButton = `
+                <button
+                    disabled
+                    style="
+                        opacity:0.6;
+                        cursor:not-allowed;
+                    ">
+                    Group Full
+                </button>
+            `;
+
+        }
+
+        else {
+
+            actionButton = `
+                <button
+                    onclick="joinGroup(${group.id})">
+                    Join Group
+                </button>
+            `;
+
+        }
 
 
         card.innerHTML = `
@@ -245,23 +353,20 @@ function displayGroups() {
             <p>
                 <strong>Members:</strong>
                 ${group.members.length}
+                /
+                ${group.maxMembers}
             </p>
 
-            ${
-                isMember
+            <p>
+                <strong>Status:</strong>
+                ${
+                    isFull
+                    ? "🔴 Full"
+                    : "🟢 Seats Available"
+                }
+            </p>
 
-                ?
-
-                `<button onclick="openGroup(${group.id})">
-                    Open Group
-                </button>`
-
-                :
-
-                `<button onclick="joinGroup(${group.id})">
-                    Join Group
-                </button>`
-            }
+            ${actionButton}
 
         `;
 
@@ -270,14 +375,25 @@ function displayGroups() {
 
     });
 
+
+    // SAVE UPDATED OLD GROUPS
+
+    localStorage.setItem(
+        "groups",
+        JSON.stringify(groups)
+    );
+
 }
 
 
-// Join Study Group
+// JOIN GROUP
+
 function joinGroup(groupId) {
 
     let groups =
-        JSON.parse(localStorage.getItem("groups")) || [];
+        JSON.parse(
+            localStorage.getItem("groups")
+        ) || [];
 
 
     const group =
@@ -296,16 +412,49 @@ function joinGroup(groupId) {
     }
 
 
-    // Prevent duplicate joining
-    if (group.members.includes(currentUser.email)) {
+    if (!group.maxMembers) {
 
-        alert("You are already a member of this group!");
+        group.maxMembers = 10;
+
+    }
+
+
+    // DUPLICATE JOIN CHECK
+
+    if (
+        group.members.includes(
+            currentUser.email
+        )
+    ) {
+
+        alert(
+            "You are already a member of this group!"
+        );
 
         return;
     }
 
 
-    group.members.push(currentUser.email);
+    // MEMBER LIMIT CHECK
+
+    if (
+        group.members.length >=
+        group.maxMembers
+    ) {
+
+        alert(
+            "This group is full. You cannot join this group."
+        );
+
+        return;
+    }
+
+
+    // ADD MEMBER
+
+    group.members.push(
+        currentUser.email
+    );
 
 
     localStorage.setItem(
@@ -314,7 +463,9 @@ function joinGroup(groupId) {
     );
 
 
-    alert("You joined the group successfully!");
+    alert(
+        "You joined the group successfully!"
+    );
 
 
     displayGroups();
@@ -322,7 +473,8 @@ function joinGroup(groupId) {
 }
 
 
-// Open Group
+// OPEN GROUP
+
 function openGroup(groupId) {
 
     localStorage.setItem(
@@ -330,17 +482,16 @@ function openGroup(groupId) {
         groupId
     );
 
-
-    window.location.href = "group.html";
-
+    window.location.href =
+        "group.html";
 }
 
 
-// Load groups when page opens
+// INITIAL LOAD
+
 displayGroups();
 
 </script>
 
 </body>
-
 </html>

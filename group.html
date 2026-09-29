@@ -2,127 +2,297 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Study Group - StudyHub</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
 </head>
 
+
 <body>
+
 
 <header>
 
     <h1>StudyHub</h1>
 
     <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="index.html">Home</a>
-        <a href="#" onclick="logout()">Logout</a>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a
+            href="#"
+            onclick="logout()">
+            Logout
+        </a>
+
     </nav>
 
 </header>
 
 
+
 <main class="dashboard">
 
-    <!-- Group Information -->
+
+    <!-- GROUP HEADER -->
+
     <section class="welcome">
 
-        <h2 id="groupTitle">Study Group</h2>
+        <h2 id="groupTitle">
+            Study Group
+        </h2>
 
         <p>
             Subject:
             <strong id="groupSubject"></strong>
         </p>
 
+        <p style="margin-top:8px;">
+
+            Members:
+            <strong id="memberCount"></strong>
+
+        </p>
+
     </section>
 
 
-    <!-- Members -->
+
+    <!-- MEMBERS -->
+
     <section class="dashboard-card">
 
         <h2>👥 Group Members</h2>
+
+        <p>
+            Students currently enrolled in this group.
+        </p>
 
         <ul id="memberList"></ul>
 
     </section>
 
 
-    <!-- Message Board -->
+
+    <!-- STUDY SESSIONS -->
+
     <section class="dashboard-card">
 
-        <h2>💬 Group Message Board</h2>
+        <h2>📅 Study Sessions</h2>
 
         <p>
-            Share questions, ideas and study information
-            with your group members.
+            View upcoming study sessions for this group.
+        </p>
+
+
+        <!-- ADMIN SESSION FORM -->
+
+        <div
+            id="sessionAdminSection"
+            style="display:none;">
+
+            <h3
+                style="margin-top:25px;">
+                ➕ Schedule Study Session
+            </h3>
+
+
+            <form id="sessionForm">
+
+
+                <label>
+                    Session Subject
+                </label>
+
+                <input
+                    type="text"
+                    id="sessionSubject"
+                    placeholder="Example: Java Revision"
+                    required>
+
+
+                <label>
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="sessionDate"
+                    required>
+
+
+                <label>
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="sessionTime"
+                    required>
+
+
+                <label>
+                    Meeting Details
+                </label>
+
+                <textarea
+                    id="meetingDetails"
+                    placeholder="Example: Google Meet link, classroom number, or meeting location"
+                    required>
+                </textarea>
+
+
+                <button
+                    type="submit"
+                    class="btn">
+
+                    Schedule Session
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- SESSION LIST -->
+
+        <h3
+            style="margin-top:30px;">
+
+            Upcoming Sessions
+
+        </h3>
+
+
+        <div id="sessionList"></div>
+
+    </section>
+
+
+
+    <!-- MESSAGE BOARD -->
+
+    <section class="dashboard-card">
+
+        <h2>
+            💬 Group Message Board
+        </h2>
+
+        <p>
+            Share questions, ideas and study information.
         </p>
 
 
         <form id="messageForm">
 
-            <label>Your Message</label>
+            <label>
+                Your Message
+            </label>
 
             <textarea
                 id="message"
                 placeholder="Write your message..."
-                required
-            ></textarea>
+                required>
+            </textarea>
 
 
-            <button type="submit" class="btn">
+            <button
+                type="submit"
+                class="btn">
+
                 Post Message
+
             </button>
 
         </form>
 
 
-        <h3 style="margin-top:30px;">
+        <h3
+            style="margin-top:30px;">
+
             Messages
+
         </h3>
+
 
         <div id="messageList"></div>
 
     </section>
 
+
 </main>
+
 
 
 <footer>
 
     <p>
-        © 2026 StudyHub | Group Study Management System
+        © 2026 StudyHub |
+        Group Study Management System
     </p>
 
 </footer>
 
 
+
 <script>
 
-// Check logged-in user
+
+// CURRENT USER
+
 const currentUser =
-    JSON.parse(localStorage.getItem("currentUser"));
+    JSON.parse(
+        localStorage.getItem("currentUser")
+    );
 
 
 if (!currentUser) {
 
-    alert("Please login first!");
+    alert(
+        "Please login first!"
+    );
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 
 }
 
 
-// Get selected group
+// SELECTED GROUP
+
 const groupId =
-    Number(localStorage.getItem("selectedGroup"));
+    Number(
+        localStorage.getItem(
+            "selectedGroup"
+        )
+    );
 
 
 let groups =
-    JSON.parse(localStorage.getItem("groups")) || [];
+    JSON.parse(
+        localStorage.getItem("groups")
+    ) || [];
 
+
+// FIND GROUP
 
 const group =
     groups.find(function(g) {
@@ -132,79 +302,490 @@ const group =
     });
 
 
-// Check group
+// GROUP NOT FOUND
+
 if (!group) {
 
-    alert("Group not found!");
+    alert(
+        "Group not found!"
+    );
 
-    window.location.href = "dashboard.html";
+    window.location.href =
+        "dashboard.html";
 
 }
 
 
-// IMPORTANT:
-// Only group members can access
+// SUPPORT OLD GROUPS
+
+if (!group.maxMembers) {
+
+    group.maxMembers = 10;
+
+}
+
+if (!group.sessions) {
+
+    group.sessions = [];
+
+}
+
+
+// MEMBER ACCESS CHECK
+
 if (
     group &&
-    !group.members.includes(currentUser.email)
+    !group.members.includes(
+        currentUser.email
+    )
 ) {
 
-    alert("Only group members can access this group!");
+    alert(
+        "Access denied! Only group members can view this group."
+    );
 
-    window.location.href = "dashboard.html";
+    window.location.href =
+        "dashboard.html";
 
 }
 
 
-// Display group information
+// DISPLAY GROUP DETAILS
+
 if (group) {
 
-    document.getElementById("groupTitle").innerText =
+    document.getElementById(
+        "groupTitle"
+    ).innerText =
         group.name;
 
-    document.getElementById("groupSubject").innerText =
+
+    document.getElementById(
+        "groupSubject"
+    ).innerText =
         group.subject;
+
+
+    document.getElementById(
+        "memberCount"
+    ).innerText =
+        `${group.members.length} / ${group.maxMembers}`;
 
 }
 
 
-// Display members
+
+// CHECK GROUP ADMIN
+
+const isGroupAdmin =
+    group.creatorEmail ===
+    currentUser.email;
+
+
+// SHOW SESSION FORM ONLY TO CREATOR
+
+if (isGroupAdmin) {
+
+    document.getElementById(
+        "sessionAdminSection"
+    ).style.display =
+        "block";
+
+}
+
+
+
+// DISPLAY MEMBERS
+
 function displayMembers() {
 
     const memberList =
-        document.getElementById("memberList");
+        document.getElementById(
+            "memberList"
+        );
 
 
     memberList.innerHTML = "";
 
 
-    group.members.forEach(function(email) {
+    group.members.forEach(
+        function(email) {
 
-        const li =
-            document.createElement("li");
+            const li =
+                document.createElement(
+                    "li"
+                );
 
 
-        li.innerText = email;
+            if (
+                email ===
+                group.creatorEmail
+            ) {
+
+                li.innerText =
+                    email +
+                    " 👑 Group Admin";
+
+            }
+
+            else {
+
+                li.innerText =
+                    email;
+
+            }
 
 
-        memberList.appendChild(li);
+            memberList.appendChild(li);
 
-    });
+        }
+    );
 
 }
 
 
-// Display messages
+
+// SCHEDULE SESSION
+
+document
+    .getElementById("sessionForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            // EXTRA ADMIN SECURITY CHECK
+
+            if (!isGroupAdmin) {
+
+                alert(
+                    "Only the group admin can schedule sessions."
+                );
+
+                return;
+
+            }
+
+
+            const subject =
+                document
+                .getElementById(
+                    "sessionSubject"
+                )
+                .value
+                .trim();
+
+
+            const date =
+                document
+                .getElementById(
+                    "sessionDate"
+                )
+                .value;
+
+
+            const time =
+                document
+                .getElementById(
+                    "sessionTime"
+                )
+                .value;
+
+
+            const meetingDetails =
+                document
+                .getElementById(
+                    "meetingDetails"
+                )
+                .value
+                .trim();
+
+
+            if (
+                !subject ||
+                !date ||
+                !time ||
+                !meetingDetails
+            ) {
+
+                alert(
+                    "Please fill all session details."
+                );
+
+                return;
+
+            }
+
+
+            // PREVENT PAST DATE
+
+            const selectedDateTime =
+                new Date(
+                    `${date}T${time}`
+                );
+
+
+            const now =
+                new Date();
+
+
+            if (
+                selectedDateTime <= now
+            ) {
+
+                alert(
+                    "Please select a future date and time."
+                );
+
+                return;
+
+            }
+
+
+            // CREATE SESSION
+
+            const newSession = {
+
+                id: Date.now(),
+
+                subject: subject,
+
+                date: date,
+
+                time: time,
+
+                meetingDetails:
+                    meetingDetails,
+
+                createdBy:
+                    currentUser.name,
+
+                createdByEmail:
+                    currentUser.email
+
+            };
+
+
+            group.sessions.push(
+                newSession
+            );
+
+
+            // SAVE
+
+            localStorage.setItem(
+                "groups",
+                JSON.stringify(groups)
+            );
+
+
+            alert(
+                "Study session scheduled successfully!"
+            );
+
+
+            // CLEAR FORM
+
+            document.getElementById(
+                "sessionSubject"
+            ).value = "";
+
+
+            document.getElementById(
+                "sessionDate"
+            ).value = "";
+
+
+            document.getElementById(
+                "sessionTime"
+            ).value = "";
+
+
+            document.getElementById(
+                "meetingDetails"
+            ).value = "";
+
+
+            displaySessions();
+
+        }
+    );
+
+
+
+// DISPLAY SESSIONS
+
+function displaySessions() {
+
+    const sessionList =
+        document.getElementById(
+            "sessionList"
+        );
+
+
+    sessionList.innerHTML = "";
+
+
+    // ONLY MEMBERS CAN SEE
+
+    if (
+        !group.members.includes(
+            currentUser.email
+        )
+    ) {
+
+        sessionList.innerHTML =
+            "<p>Access denied.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        group.sessions.length === 0
+    ) {
+
+        sessionList.innerHTML =
+            "<p>No study sessions scheduled yet.</p>";
+
+        return;
+
+    }
+
+
+    // SORT BY DATE + TIME
+
+    const sortedSessions =
+        [...group.sessions].sort(
+            function(a, b) {
+
+                return new Date(
+                    `${a.date}T${a.time}`
+                ) -
+                new Date(
+                    `${b.date}T${b.time}`
+                );
+
+            }
+        );
+
+
+    sortedSessions.forEach(
+        function(session) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "card";
+
+
+            const sessionDate =
+                new Date(
+                    `${session.date}T${session.time}`
+                );
+
+
+            const formattedDate =
+                sessionDate.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+
+
+            const formattedTime =
+                sessionDate.toLocaleTimeString(
+                    "en-IN",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            card.innerHTML = `
+
+                <h3>
+                    📚 ${session.subject}
+                </h3>
+
+                <p>
+                    <strong>Date:</strong>
+                    ${formattedDate}
+                </p>
+
+                <p>
+                    <strong>Time:</strong>
+                    ${formattedTime}
+                </p>
+
+                <p>
+                    <strong>Meeting Details:</strong>
+                    ${session.meetingDetails}
+                </p>
+
+                <p>
+                    <strong>Scheduled By:</strong>
+                    ${session.createdBy}
+                </p>
+
+            `;
+
+
+            sessionList.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+
+// DISPLAY MESSAGES
+
 function displayMessages() {
 
     const messageList =
-        document.getElementById("messageList");
+        document.getElementById(
+            "messageList"
+        );
 
 
     messageList.innerHTML = "";
 
 
-    if (group.messages.length === 0) {
+    // MEMBER GUARD
+
+    if (
+        !group.members.includes(
+            currentUser.email
+        )
+    ) {
+
+        messageList.innerHTML =
+            "<p>Access denied.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        group.messages.length === 0
+    ) {
 
         messageList.innerHTML =
             "<p>No messages yet. Be the first to post!</p>";
@@ -214,98 +795,151 @@ function displayMessages() {
     }
 
 
-    group.messages.forEach(function(msg) {
+    group.messages.forEach(
+        function(msg) {
 
-        const card =
-            document.createElement("div");
-
-
-        card.className = "card";
-
-
-        card.innerHTML = `
-
-            <strong>${msg.user}</strong>
-
-            <p>${msg.message}</p>
-
-        `;
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        messageList.appendChild(card);
-
-    });
-
-}
+            card.className =
+                "card";
 
 
-// Post message
-document
-    .getElementById("messageForm")
-    .addEventListener("submit", function(event) {
+            card.innerHTML = `
 
-        event.preventDefault();
+                <strong>
+                    ${msg.user}
+                </strong>
+
+                <p>
+                    ${msg.message}
+                </p>
+
+            `;
 
 
-        const message =
-            document.getElementById("message")
-            .value
-            .trim();
-
-
-        if (!message) {
-
-            alert("Please enter a message!");
-
-            return;
+            messageList.appendChild(
+                card
+            );
 
         }
-
-
-        group.messages.push({
-
-            user: currentUser.name,
-
-            message: message
-
-        });
-
-
-        localStorage.setItem(
-            "groups",
-            JSON.stringify(groups)
-        );
-
-
-        document.getElementById("message").value = "";
-
-
-        alert("Message posted successfully!");
-
-
-        displayMessages();
-
-    });
-
-
-// Logout
-function logout() {
-
-    localStorage.removeItem("currentUser");
-
-    window.location.href = "login.html";
+    );
 
 }
 
 
-// Load data
+
+// POST MESSAGE
+
+document
+    .getElementById("messageForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            // MEMBER CHECK
+
+            if (
+                !group.members.includes(
+                    currentUser.email
+                )
+            ) {
+
+                alert(
+                    "Only group members can post messages."
+                );
+
+                return;
+
+            }
+
+
+            const message =
+                document
+                .getElementById(
+                    "message"
+                )
+                .value
+                .trim();
+
+
+            if (!message) {
+
+                alert(
+                    "Please enter a message!"
+                );
+
+                return;
+
+            }
+
+
+            group.messages.push({
+
+                user:
+                    currentUser.name,
+
+                message:
+                    message
+
+            });
+
+
+            localStorage.setItem(
+                "groups",
+                JSON.stringify(groups)
+            );
+
+
+            document.getElementById(
+                "message"
+            ).value = "";
+
+
+            alert(
+                "Message posted successfully!"
+            );
+
+
+            displayMessages();
+
+        }
+    );
+
+
+
+// LOGOUT
+
+function logout() {
+
+    localStorage.removeItem(
+        "currentUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+// INITIAL DISPLAY
+
 displayMembers();
 
+displaySessions();
+
 displayMessages();
+
 
 </script>
 
 </body>
 
 </html>
-
